@@ -1,29 +1,41 @@
-import NextAuth from "next-auth/next";
-import FortyTwoProvider from "next-auth/providers/42-school";
-require("dotenv").config();
+import NextAuth from 'next-auth/next';
+import FortyTwoProvider from 'next-auth/providers/42-school';
+require('dotenv').config();
 
-const invalidPrimaryCampus = profile => {
-  const campusId = profile.campus_users.find(cu => cu.is_primary)?.campus_id;
-
-  return campusId.toString() !== 13;
+export const authOptions = {
+	providers: [
+		FortyTwoProvider({
+			clientId: process.env.NEXT_PUBLIC_CLIENTID,
+			clientSecret: process.env.NEXT_PUBLIC_CLIENTSECRET,
+		}),
+	],
+	callbacks: {
+		async session({ session, user, token, account }) {
+			if (token) {
+				session.user.accessToken = token.accessToken;
+				session.user.exp = token.exp;
+				session.user.iat = token.iat;
+				session.user.urlProfile = token.oauthProfile;
+				session.user.login = token.login;
+				session.user.image = token.image;
+				session.user.id = token.id;
+			}
+			return session;
+		},
+		async jwt({ token, user, account, profile }) {
+			if (account) {
+				token.accessToken = account.access_token;
+				token.id = profile.id;
+				token.exp = account.expires_at;
+				token.urlProfile = profile.url;
+				token.login = profile.login;
+				token.image = profile.image.link;
+			}
+			return token;
+		},
+	},
+	debug: false,
 };
 
-const handler = NextAuth({
-  providers: [
-    FortyTwoProvider({
-      clientId: process.env.NEXT_PUBLIC_CLIENTID,
-      clientSecret: process.env.NEXT_PUBLIC_CLIENTSECRET,
-    }),
-  ],
-  callbacks: {
-    async jwt({ token, user }) {
-      return { ...token, ...user };
-    },
-    async session({ session, token }) {
-      session.user = token;
-      return session;
-    },
-  },
-});
-
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
