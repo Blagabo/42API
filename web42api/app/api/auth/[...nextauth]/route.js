@@ -5,8 +5,8 @@ require('dotenv').config();
 export const authOptions = {
 	providers: [
 		FortyTwoProvider({
-			clientId: process.env.NEXT_PUBLIC_CLIENTID,
-			clientSecret: process.env.NEXT_PUBLIC_CLIENTSECRET,
+			clientId: process.env.CLIENTID,
+			clientSecret: process.env.CLIENTSECRET,
 		}),
 	],
 	callbacks: {

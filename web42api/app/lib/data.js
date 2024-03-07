@@ -5,12 +5,12 @@ let accessToken;
 
 const getToken = async () => {
 	const tokenEndpoint = 'oauth/token';
-	const tokenUrl = process.env.NEXT_PUBLIC_APIURL + tokenEndpoint;
+	const tokenUrl = process.env.APIURL + tokenEndpoint;
 
 	const data = {
 		grant_type: 'client_credentials',
-		client_id: process.env.NEXT_PUBLIC_CLIENTID,
-		client_secret: process.env.NEXT_PUBLIC_CLIENTSECRET,
+		client_id: process.env.CLIENTID,
+		client_secret: process.env.CLIENTSECRET,
 	};
 
 	try {
@@ -93,7 +93,7 @@ const fetchHours = async (id, startDate, endDate) => {
 
 const fetchProjects = async (id, startDate, endDate) => {
 	const token = await getToken();
-	const apiUrl = `${process.env.NEXT_PUBLIC_APIURL}/v2/users/${id}/projects_users?filter[status]=finished&filter[cursus]=21&range[updated_at]=${startDate.toISOString()},${endDate.toISOString()}`;
+	const apiUrl = `${process.env.APIURL}/v2/users/${id}/projects_users?filter[status]=finished&filter[cursus]=21&range[updated_at]=${startDate.toISOString()},${endDate.toISOString()}`;
 	try {
 		const response = await axios.get(apiUrl, {
 			headers: {
