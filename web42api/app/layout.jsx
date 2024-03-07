@@ -1,5 +1,6 @@
 import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 import { Providers } from './context/Providers';
 import AppNavbar from '@/components/appNavbar';
@@ -20,6 +21,7 @@ export default function RootLayout({ children }) {
 					<AppNavbar />
 					{children}
 					<Analytics />
+					<SpeedInsights />
 				</Providers>
 			</body>
 		</html>
