@@ -5,6 +5,8 @@
         "node": true
     },
     "extends": [
+        "next/babel",
+        "next/core-web-vitals",
         "standard",
         "plugin:react/recommended",
         "eslint-config-prettier",

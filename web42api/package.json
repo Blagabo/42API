@@ -7,7 +7,8 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"clean": "rm -rf .next && rm -rf node_modules"
+		"clean": "rm -rf .next && rm -rf node_modules && rm -rf pnpm-lock.yaml",
+		"preinstall": "npx only-allow pnpm"
 	},
 	"dependencies": {
 		"@nextui-org/react": "^2.2.10",
@@ -22,7 +23,7 @@
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-icons": "^5.0.1",
-		"simple-oauth2": "^5.0.0"
+		"sharp": "^0.33.2"
 	},
 	"devDependencies": {
 		"autoprefixer": "^10.4.18",

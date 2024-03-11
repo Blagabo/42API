@@ -15,20 +15,34 @@ import {
 	Avatar,
 	Button,
 	Divider,
+	NavbarMenu,
+	NavbarMenuItem,
+	NavbarMenuToggle,
 } from '@nextui-org/react';
 import { UserIcon } from './icons/UserIcon';
+import { useState } from 'react';
+import Image from 'next/image';
 
 function AppNavbar() {
 	const session = useSession().data;
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+	const menuItems = ['whitenova'];
 
 	return (
 		<>
-			<Navbar className='p-2'>
-				<NavbarBrand>
-					<Link href='/'>
-						<h1 className='font-bold text-white text-2xl'>42 API</h1>
-					</Link>
-				</NavbarBrand>
+			<Navbar onMenuOpenChange={setIsMenuOpen} className='p-2'>
+				<NavbarContent>
+					<NavbarMenuToggle
+						aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+						className='sm:hidden'
+					/>
+					<NavbarBrand>
+						<Link href='/'>
+							<h1 className='font-bold text-white text-2xl'>42 API</h1>
+						</Link>
+					</NavbarBrand>
+				</NavbarContent>
 				<NavbarContent className='hidden sm:flex gap-4' justify='center'>
 					<NavbarItem>
 						<Link color='foreground' href='/whitenova'>
@@ -53,13 +67,12 @@ function AppNavbar() {
 					<NavbarContent as='div' justify='end'>
 						<Dropdown placement='bottom'>
 							<DropdownTrigger>
-								<Avatar
-									isBordered
-									className='transition-transform'
-									name={session?.user?.name}
-									size='md'
-									radius='sm'
-									src={session?.user?.image}
+								<Image
+									className='w-[50px] h-[50px] rounded-full border-2 border-gray-400'
+									width={50}
+									height={50}
+									src={session?.user?.image.versions.medium}
+									alt='User Image'
 								/>
 							</DropdownTrigger>
 							<DropdownMenu aria-label='Profile Actions' variant='flat'>
@@ -79,6 +92,20 @@ function AppNavbar() {
 						</Dropdown>
 					</NavbarContent>
 				)}
+				<NavbarMenu className='py-6'>
+					{menuItems.map((item, index) => (
+						<NavbarMenuItem key={`${item}-${index}`}>
+							<Link
+								color='foreground'
+								className='w-full'
+								href={`/${item}`}
+								size='lg'
+							>
+								{item}
+							</Link>
+						</NavbarMenuItem>
+					))}
+				</NavbarMenu>
 			</Navbar>
 			<Divider orientation='horizontal' />
 		</>

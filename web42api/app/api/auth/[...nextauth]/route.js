@@ -29,7 +29,7 @@ export const authOptions = {
 				token.exp = account.expires_at;
 				token.urlProfile = profile.url;
 				token.login = profile.login;
-				token.image = profile.image.link;
+				token.image = profile.image;
 			}
 			return token;
 		},

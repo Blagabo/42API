@@ -108,14 +108,18 @@ const fetchProjects = async (id, startDate, endDate) => {
 	}
 };
 
-function getNextFriday() {
-	const today = new Date('2024-02-23T08:00:00.000Z');
-	const daysUntilFriday = (5 - today.getDay() + 7) % 7;
-	const nextFriday = new Date(today);
-	nextFriday.setDate(today.getDate() + daysUntilFriday);
-	nextFriday.setHours(8, 0, 0, 0);
+function getCycleDates(lastWhitenovaCycleDate) {
+	const lastCycleDate = new Date(lastWhitenovaCycleDate);
+	const nextCycleStartDate = new Date(lastCycleDate);
+	nextCycleStartDate.setDate(lastCycleDate.getDate() + 1); // Next day after the last cycle
+	const nextCycleEndDate = new Date(nextCycleStartDate);
+	nextCycleEndDate.setDate(nextCycleStartDate.getDate() + 13); // 14 days from the start
+	const cycleDates = {
+		startDate: nextCycleStartDate,
+		endDate: nextCycleEndDate,
+	};
 
-	return nextFriday;
+	return cycleDates;
 }
 
 function calculateTotalHours(data) {
@@ -128,12 +132,11 @@ function calculateTotalHours(data) {
 }
 
 async function totalHours(id) {
-	const startDate = getNextFriday();
-	const endDate = new Date(startDate);
-	endDate.setDate(startDate.getDate() + 14);
+	const lastWhitenovaCycleDate = '2024-03-08';
+	const { startDate, endDate } = getCycleDates(lastWhitenovaCycleDate);
 	const locationsData = await fetchHours(id, startDate, endDate);
-	const totalHours = calculateTotalHours(locationsData);
-	return totalHours;
+	const Hourstotal = calculateTotalHours(locationsData);
+	return { startDate, endDate, Hourstotal };
 }
 
 const isInLastDays = async ({ id }) => {
@@ -144,10 +147,10 @@ const isInLastDays = async ({ id }) => {
 	const name = data[0].project.name;
 	const dataProjectDate = new Date(data[0].updated_at);
 	const timeDifference = currentDate - dataProjectDate;
-	const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+	const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 	const isInLast90Days = daysDifference <= 90;
 
-	return { isInLast90Days, name };
+	return { isInLast90Days, daysDifference, name };
 };
 
 module.exports = {

@@ -1,6 +1,12 @@
 import { getServerSession } from 'next-auth/next';
+import { Suspense } from 'react';
 import { authOptions } from '../api/auth/[...nextauth]/route';
 import { fetchBlackHold, isInLastDays, totalHours } from '../lib/data';
+
+export const metadata = {
+	title: 'WhiteNova',
+	description: 'view your WhiteNova status',
+};
 
 import {
 	Card,
@@ -9,10 +15,10 @@ import {
 	CardHeader,
 	Divider,
 	Progress,
+	Spinner,
 } from '@nextui-org/react';
 import CheckProject from '@/components/checkProject';
 import HoursCount from '@/components/HoursCount';
-import { Suspense } from 'react';
 
 const options = {
 	year: 'numeric',
@@ -24,11 +30,17 @@ const options = {
 	timeZoneName: 'short',
 };
 
+const options2 = {
+	year: 'numeric',
+	month: 'long',
+	day: 'numeric',
+};
+
 export default async function blackHoldPage() {
 	const session = await getServerSession(authOptions);
 	const id = session?.user.id;
 	const data = await fetchBlackHold(id);
-	const hours = await totalHours(id);
+	const { startDate, endDate, Hourstotal } = await totalHours(id);
 	const { isInLast90Days: validProject } = await isInLastDays({ id });
 	let apto = false;
 
@@ -50,33 +62,44 @@ export default async function blackHoldPage() {
 			? 'No disponible'
 			: differenceInDays;
 
-		if (daysRemaining <= 42 && hours >= 12 && validProject === true) {
+		if (daysRemaining <= 42 && Hourstotal >= 12 && validProject === true) {
 			apto = true;
 		} else {
 			apto = false;
 		}
+
+		const formattedStart = startDate.toLocaleDateString('es-ES', options2);
+		const formattedEnd = endDate.toLocaleDateString('es-ES', options2);
 
 		return (
 			<div className='mt-5'>
 				<h1 className='text-center font-bold text-2xl'>WHITENOVA</h1>
 				<div className='flex justify-center'>
 					<div className='flex flex-col items-center m-8 px-10 sm:flex-row'>
-						<Card className='max-w-lg m-2 w-72 sm:w-[18rem]'>
-							<CardHeader className='flex gap-3'>
-								<div className='flex flex-col'>
-									<p className='text-medium text-center'>Fecha de Blackhold</p>
-									<p className='text-medium text-default-500'>
-										{formattedDate}
-									</p>
-								</div>
-							</CardHeader>
+						<Card className='max-w-lg m-2 w-72 sm:w-[19rem]'>
+							<Suspense fallback={<Spinner size='md' color='primary' />}>
+								<CardHeader className='flex gap-3'>
+									<div className='flex flex-col'>
+										<p className='text-medium text-center'>
+											Fecha de Blackhold
+										</p>
+										<p className='text-medium text-default-500'>
+											{formattedDate}
+										</p>
+									</div>
+								</CardHeader>
+							</Suspense>
 							<Divider />
 							<CardBody>
-								<p>📅 Dias Restantes: {daysRemaining}</p>
+								<Suspense fallback={<Spinner size='md' color='primary' />}>
+									<p>📅 Dias Restantes: {daysRemaining}</p>
+								</Suspense>
 							</CardBody>
 							<Divider />
 							<CardFooter>
-								<CheckProject id={session?.user.login} />
+								<Suspense fallback={<Spinner size='md' color='primary' />}>
+									<CheckProject id={session?.user.login} />
+								</Suspense>
 							</CardFooter>
 						</Card>
 						<Divider orientation='vertical' className='m-2 hidden sm:block' />
@@ -94,7 +117,7 @@ export default async function blackHoldPage() {
 									/>
 								}
 							>
-								<HoursCount Hours={hours} />
+								<HoursCount Hours={Hourstotal} />
 							</Suspense>
 							<Divider orientation='horizontal' className='m-2 w-72' />
 							<p className='text-center font-semibold text-lg m-3'>
@@ -102,6 +125,11 @@ export default async function blackHoldPage() {
 									? '✅ APTO PARA WHITENOVA'
 									: '❌ NO APTO PARA WHITENOVA'}
 							</p>
+							<Divider orientation='horizontal' className='m-2 w-72' />
+							<p className='text-center my-2'>
+								Inicio de ciclo: {`${formattedStart}`}
+							</p>
+							<p className='text-center'>Fin de ciclo: {`${formattedEnd}`}</p>
 						</div>
 					</div>
 				</div>

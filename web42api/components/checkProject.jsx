@@ -2,13 +2,17 @@ import { isInLastDays } from '@/app/lib/data';
 import Alert from './Alert';
 
 const CheckProject = async ({ id }) => {
-	const { isInLast90Days, name } = await isInLastDays({ id });
+	const { isInLast90Days, daysDifference, name } = await isInLastDays({ id });
 	try {
 		if (isInLast90Days) {
 			return (
 				<div className='text-center'>
-					<p>Tu proyecto entregado en los ultimos 90 días</p>
+					<p>Tu proyecto entregado en los últimos 90 días</p>
 					<p className='text-medium font-semibold'>{name}</p>
+					<p>
+						Quedan <span className='font-semibold'>{daysDifference}</span> días
+						para dejar de ser válido
+					</p>
 				</div>
 			);
 		} else {
