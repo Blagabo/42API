@@ -55,7 +55,7 @@ function AppNavbar() {
 					<NavbarContent as='div' justify='end'>
 						<NavbarItem>
 							<Button
-								onClick={() => signIn()}
+								onClick={() => signIn('42-school')}
 								variant='bordered'
 								startContent={<UserIcon />}
 							>
@@ -71,7 +71,7 @@ function AppNavbar() {
 									className='w-[50px] h-[50px] rounded-full border-2 border-gray-400'
 									width={50}
 									height={50}
-									src={session?.user?.image.versions.medium}
+									src={session.user.image.versions.medium}
 									alt='User Image'
 								/>
 							</DropdownTrigger>
