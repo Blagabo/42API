@@ -132,7 +132,7 @@ function calculateTotalHours(data) {
 }
 
 async function totalHours(id) {
-	const lastWhitenovaCycleDate = '2024-03-08';
+	const lastWhitenovaCycleDate = '2024-03-22';
 	const { startDate, endDate } = getCycleDates(lastWhitenovaCycleDate);
 	const locationsData = await fetchHours(id, startDate, endDate);
 	const Hourstotal = calculateTotalHours(locationsData);
