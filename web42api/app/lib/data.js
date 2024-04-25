@@ -144,7 +144,15 @@ const isInLastDays = async ({ id }) => {
 	const startDate = new Date();
 	startDate.setDate(startDate.getDate() - 90);
 	const data = await fetchProjects(id, startDate, currentDate);
-	const name = data[0].project.name;
+	if (!data || data.length === 0) {
+		console.error('No se encontraron proyectos en los últimos 90 días');
+		return { isInLast90Days: false, daysDifference: 0, name: null };
+	}
+	const name = data[0]?.project?.name;
+	if (!name) {
+		console.error('No se encontró el nombre del proyecto');
+		return { isInLast90Days: false, daysDifference: 0, name: null };
+	}
 	const dataProjectDate = new Date(data[0].updated_at);
 	const timeDifference = currentDate - dataProjectDate;
 	const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
