@@ -147,8 +147,9 @@ const isInLastDays = async ({ id }) => {
 	const name = data[0].project.name;
 	const dataProjectDate = new Date(data[0].updated_at);
 	const timeDifference = currentDate - dataProjectDate;
-	const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+	let daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 	const isInLast90Days = daysDifference <= 90;
+	daysDifference = 90 - daysDifference;
 
 	return { isInLast90Days, daysDifference, name };
 };
